@@ -19,7 +19,7 @@
 <body>
   <!-- HTML code -->
   <div id="viewer">
-    <canvas style="border: 1px solid red;" id="pdf-canvas"></canvas>
+    <canvas id="pdf-canvas"></canvas>
   </div>
 </body>
 <script>
@@ -46,7 +46,7 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.js';
 
   // pdf的路径
-  var pdfUrl = 'https://aiguo-fuzhou.oss-cn-fuzhou.aliyuncs.com/%E9%99%84%E4%BB%B615%E3%80%81%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C%EF%BC%88%E5%85%A5%E8%81%8C%EF%BC%89%E3%80%90%E6%97%A0%E7%AB%9E%E4%B8%9A%E9%99%90%E5%88%B6%E5%86%85%E5%AE%B9%E7%89%88%E6%9C%AC%E3%80%91202209.pdf';
+  var pdfUrl = '二手房无中介买卖合同.pdf';
 
   // Load the PDF document
   pdfjsLib.getDocument(pdfUrl).promise.then(async function (pdfDoc) {
@@ -54,26 +54,32 @@
     var canvas = document.getElementById('pdf-canvas');
 
     // 注意这里返回的是一个promise
-    pdfPage = await pdfDoc.getPage(1);
+    pdfPage = await pdfDoc.getPage(2);
 
-    // page.getTextContent().then(
-    //   (textContent) => {
-    //     console.log(textContent)
-    //     textContent.items.forEach(item => {
+    // var textLayerDiv = document.getElementById('text-layer');
+    // var textLayer = new TextLayerBuilder({
+    //   textLayerDiv: textLayerDiv
+    // });
 
-    //       // get item dimensions and position
-    //       // from transform matrices
-    //       const tx = pdfjsLib.Util.transform(
-    //         viewport.transform,
-    //         item.transform
-    //       );
-    //       console.log(tx)
-    //       const itemX = tx[4];
-    //       const itemY = tx[5] - item.height;
+    pdfPage.getTextContent({
+      disableCombineTextItems: true
+    }).then(
+      (textContent) => {
+        console.log(textContent)
+        textContent.items.forEach(item => {
 
-    //     });
-    //   }
-    // );
+          // get item dimensions and position
+          // from transform matrices
+          const tx = pdfjsLib.Util.transform(
+            viewport.transform,
+            item.transform
+          );
+          console.log(tx)
+          const itemX = tx[4];
+          const itemY = tx[5] - item.height;
+        });
+      }
+    );
 
     var viewport = pdfPage.getViewport({ scale: pdfScale });
     canvas.width = viewport.width;
